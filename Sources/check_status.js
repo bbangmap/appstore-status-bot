@@ -67,7 +67,7 @@ const getGist = async () => {
     .catch((error) => console.error(`[*] Unable to update gist\n${error}`));
   if (!gist) return;
 
-  print(gist, Object.keys(gist.data.files));
+  console.log(gist, Object.keys(gist.data.files));
   const filename = Object.keys(gist.data.files)[0];
   const rawdataURL = gist.data.files[filename].raw_url;
 
