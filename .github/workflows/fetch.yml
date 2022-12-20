@@ -18,7 +18,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.0.5"
-      - run: lsof -i tcp:8080
       - run: gem install bundler:2.1.4
       - run: bundle update
       - run: npm install
