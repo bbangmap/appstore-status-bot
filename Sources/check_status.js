@@ -9,8 +9,8 @@ const env = Object.create(process.env);
 const octokit = new Octokit({ auth: `token ${process.env.GH_TOKEN}` });
 
 const main = async () => {
-  await getGist();
-
+  var aa = await getGist();
+  console.log(aa);
   exec(
     "ruby Sources/fetch_app_status.rb",
     { env: env },
@@ -75,12 +75,13 @@ const getGist = async () => {
   };
 
   const result = await request.get(options);
-  try {
-    await fs.writeFile("store.db", result);
-    console.log("[*] file saved!");
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   await fs.writeFile("store.db", result);
+  //   console.log("[*] file saved!");
+  // } catch (error) {
+  //   console.log(error);
+  // }
+  return result
 };
 
 const updateGist = async (content) => {
