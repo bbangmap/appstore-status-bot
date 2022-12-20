@@ -32,7 +32,7 @@ const main = async () => {
 const checkVersion = async (app) => {
   var appInfoKey = "appInfo-" + app.appID;
   var submissionStartKey = "submissionStart" + app.appID;
-
+  console.log("[*] checkVersion");
   const db = dirty("store.db");
   db.on("load", async function () {
     var lastAppInfo = db.get(appInfoKey);
@@ -40,7 +40,7 @@ const checkVersion = async (app) => {
       console.log("[*] status is different");
       slack.post(app, db.get(submissionStartKey));
 
-      if (app.status == "Waiting For Review") {
+      if (app.status == "Waiting For review") {
         db.set(submissionStartKey, new Date());
       }
     } else {
@@ -53,6 +53,7 @@ const checkVersion = async (app) => {
       const data = await fs.readFile("store.db", "utf-8");
       await updateGist(data);
     } catch (error) {
+      console.log("[*]error");
       console.log(error);
     }
   });
