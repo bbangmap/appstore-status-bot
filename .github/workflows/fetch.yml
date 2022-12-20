@@ -21,6 +21,7 @@ jobs:
       - run: gem install bundler:2.1.4
       - run: bundle update
       - run: npm install
+      - run: npm install dirty
       - run: node Sources/check_status.js
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
