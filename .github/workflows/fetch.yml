@@ -21,6 +21,8 @@ jobs:
       - run: gem install bundler:2.1.4
       - run: bundle update
       - run: npm install
+      - run: |
+          lsof -i tcp:8080
       - run: node Sources/check_status.js
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
