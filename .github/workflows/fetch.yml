@@ -19,7 +19,7 @@ jobs:
         with:
           ruby-version: "3.0.5"
       - run: gem install bundler:2.1.4
-      - run: bundle install
+      - run: bundle update
       - run: npm install
       - run: node Sources/check_status.js
         env:
