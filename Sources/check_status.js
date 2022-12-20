@@ -17,7 +17,7 @@ const main = async () => {
     function (err, stdout, stderr) {
       if (stdout) {
         var apps = JSON.parse(stdout);
-        console.log(apps);
+        console.log("[*] app", apps);
         for (let app of apps) {
           checkVersion(app);
         }
@@ -67,7 +67,10 @@ const getGist = async () => {
     .catch((error) => console.error(`[*] Unable to update gist\n${error}`));
   if (!gist) return;
 
-  console.log(gist, Object.keys(gist.data.files));
+  console.log(gist);
+  console.log(Object.keys(gist.data.files));
+  console.log(Object.keys(gist.data.files)[0]);
+  console.log(gist.data.files[Object.keys(gist.data.files)[0]]);
   const filename = Object.keys(gist.data.files)[0];
   const rawdataURL = gist.data.files[filename].raw_url;
 
