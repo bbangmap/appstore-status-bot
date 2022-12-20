@@ -15,11 +15,13 @@ jobs:
           node-version: "14.x"
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: "true"
-      - uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "2.6"
+          ruby-version: "2.7.2"
+          bundler-cache: true
       - run: gem install bundler:2.1.4
       - run: bundle install
+      - run: bundle update
       - run: npm install
       - run: node Sources/check_status.js
         env:
