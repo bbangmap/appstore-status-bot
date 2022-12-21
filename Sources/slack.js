@@ -15,7 +15,7 @@ i18n.configure({
 i18n.setLocale(language);
 
 function post(appInfo, submissionStartDate) {
-  console.log("[*] slack post", appInfo, submissionStartDate);
+  console.log("[*] slack post");
   const status = i18n.__(appInfo.status);
   const message = i18n.__("Message", { appname: appInfo.name, status: status });
   const attachment = slackAttachment(appInfo, submissionStartDate);

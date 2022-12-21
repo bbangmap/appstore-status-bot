@@ -16,7 +16,6 @@ const main = async () => {
     { env: env },
     function (_, app, stderr) {
       if (app) {
-        console.log("[*]", app)
         var parsed_app = JSON.parse(app);
         var parsed_gist = JSON.parse(existGist);
 
@@ -36,9 +35,6 @@ const checkVersion = async (app, gist) => {
   var currentDay = app.app_store_version_phased_release.current_day_number
   var phased_release_state = app.app_store_version_phased_release.phased_release_state
   app["phase_percentage"] = calculatePercentage(currentDay, phased_release_state)
-
-  console.log("[*] current appstore ", app);
-  console.log("[*] previous appstore ", gist);
 
   if (!app.appID || app.status != gist.status || app.app_store_version_phased_release != gist.app_store_version_phased_release) {
     console.log("[*] status is different");
@@ -100,7 +96,7 @@ const getGist = async () => {
 };
 
 const updateGist = async (content) => {
-  console.log("[*] updateGist", content);
+  console.log("[*] updateGist");
 
   const gist = await octokit.rest.gists
     .get({
