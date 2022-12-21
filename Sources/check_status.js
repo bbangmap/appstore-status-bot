@@ -36,7 +36,7 @@ const checkVersion = async (app, gist) => {
   var phased_release_state = app.app_store_version_phased_release.phased_release_state
   app["phase_percentage"] = calculatePercentage(currentDay, phased_release_state)
 
-  if (!app.appID || app.status != gist.status || app.app_store_version_phased_release.current_day_number != gist.app_store_version_phased_release.current_day_number) {
+  if (!app.appID || phased_release_state.phased_release_state != gist.app_store_version_phased_release.phased_release_state || app.status != gist.status || phased_release_state.current_day_number != gist.app_store_version_phased_release.current_day_number) {
     console.log("[*] status is different");
 
     var submission_start_date = gist.submission_start_date
@@ -55,6 +55,9 @@ const checkVersion = async (app, gist) => {
   await updateGist(app);
 };
 const calculatePercentage = (currentDay, phased_release_state) => {
+  if (phased_release_state == "PAUSED") {
+    return "점진적 배포가 중단되었습니다."
+  }
   if (phased_release_state != "ACTIVE") {
     return "점진적 배포 진행중이 아닙니다."
   }
