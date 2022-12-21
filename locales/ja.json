@@ -16,5 +16,7 @@
     "Invalid binary": "Invalid Binary",
     "Status": "状態",
     "Version": "バージョン",
-    "Message": "*{{appname}}*の状態が*{{status}}*に変更されました。 🚀"
+    "Message": "*{{appname}}*の状態が*{{status}}*に変更されました。 🚀",
+	"Phase percentage": "位相パーセンテージ",
+	"Elapsed Time": "경과 시간"
 }

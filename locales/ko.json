@@ -16,5 +16,7 @@
   "Invalid binary": "Invalid Binary",
   "Status": "상태",
   "Version": "버전",
-  "Message": "*{{appname}}* 앱의 상태가 *{{status}}* 으로 변경 되었습니다. 🚀"
+  "Message": "*{{appname}}* 앱의 상태가 *{{status}}* 으로 변경 되었습니다. 🚀",
+  "Phase percentage": "점진적 출시 진행률",
+  "Elapsed Time": "경과 시간"
 }

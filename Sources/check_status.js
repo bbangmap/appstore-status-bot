@@ -9,18 +9,18 @@ const env = Object.create(process.env);
 const octokit = new Octokit({ auth: `token ${process.env.GH_TOKEN}` });
 
 const main = async () => {
-  await getGist();
+  var existGist = await getGist();
 
   exec(
     "ruby Sources/fetch_app_status.rb",
     { env: env },
-    function (err, stdout, stderr) {
-      if (stdout) {
-        var apps = JSON.parse(stdout);
-        console.log(apps);
-        for (let app of apps) {
-          checkVersion(app);
-        }
+    function (_, app, stderr) {
+      if (app) {
+        console.log("[*]", app)
+        var parsed_app = JSON.parse(app);
+        var parsed_gist = JSON.parse(existGist);
+
+        checkVersion(parsed_app, parsed_gist);
       } else {
         console.log("There was a problem fetching the status of the app!");
         console.log(stderr);
@@ -29,33 +29,56 @@ const main = async () => {
   );
 };
 
-const checkVersion = async (app) => {
-  var appInfoKey = "appInfo-" + app.appID;
-  var submissionStartKey = "submissionStart" + app.appID;
+const checkVersion = async (app, gist) => {
+  console.log("[*] checkVersion");
+  var app = app[0];
+  app["submission_start_date"] = gist.submission_start_date;
+  var currentDay = app.app_store_version_phased_release.current_day_number
+  var phased_release_state = app.app_store_version_phased_release.phased_release_state
+  app["phase_percentage"] = calculatePercentage(currentDay, phased_release_state)
 
-  const db = dirty("store.db");
-  db.on("load", async function () {
-    var lastAppInfo = db.get(appInfoKey);
-    if (!lastAppInfo || lastAppInfo.status != app.status) {
-      console.log("[*] status is different");
-      slack.post(app, db.get(submissionStartKey));
+  console.log("[*] current appstore ", app);
+  console.log("[*] previous appstore ", gist);
 
-      if (app.status == "Waiting For Review") {
-        db.set(submissionStartKey, new Date());
-      }
-    } else {
-      console.log("[*] status is same");
+  if (!app.appID || app.status != gist.status || app.app_store_version_phased_release != gist.app_store_version_phased_release) {
+    console.log("[*] status is different");
+
+    var submission_start_date = gist.submission_start_date
+    if (!submission_start_date) {
+      submission_start_date = new Date();
     }
+    slack.post(app, submission_start_date);
 
-    db.set(appInfoKey, app);
-
-    try {
-      const data = await fs.readFile("store.db", "utf-8");
-      await updateGist(data);
-    } catch (error) {
-      console.log(error);
+    if (app.status == "Waiting for review") {
+      app["submission_start_date"] = new Date();
     }
-  });
+  } else {
+    console.log("[*] status is same");
+  }
+
+  await updateGist(app);
+};
+const calculatePercentage = (currentDay, phased_release_state) => {
+  if (phased_release_state != "ACTIVE") {
+    return "점진적 배포 진행중이 아닙니다."
+  }
+  if (currentDay == 1) {
+    return "1%"
+  } else if (currentDay == 2) {
+    return "2%" 
+  } else if (currentDay == 3) {
+    return "5%"
+  } else if (currentDay == 4) {
+    return "10%"
+  } else if (currentDay == 5) {
+    return "20%"
+  } else if (currentDay == 6) {
+    return "50%"
+  } else if (currentDay == 7) {
+    return "100%"
+  } else {
+    return "점진적 배포 진행중이 아닙니다."
+  }
 };
 
 const getGist = async () => {
@@ -73,16 +96,12 @@ const getGist = async () => {
     url: rawdataURL,
   };
 
-  const result = await request.get(options);
-  try {
-    await fs.writeFile("store.db", result);
-    console.log("[*] file saved!");
-  } catch (error) {
-    console.log(error);
-  }
+  return await request.get(options)
 };
 
 const updateGist = async (content) => {
+  console.log("[*] updateGist", content);
+
   const gist = await octokit.rest.gists
     .get({
       gist_id: process.env.GIST_ID,
@@ -95,7 +114,7 @@ const updateGist = async (content) => {
     gist_id: process.env.GIST_ID,
     files: {
       [filename]: {
-        content: content,
+        content: JSON.stringify(content),
       },
     },
   });

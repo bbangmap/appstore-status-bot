@@ -8,13 +8,14 @@ const language = process.env.LANGUAGE;
 const i18n = new I18n();
 
 i18n.configure({
-  locales: ['en','ko', 'ja'],
+  locales: ['en', 'ko', 'ja'],
   directory: path.join(__dirname, '../locales')
 });
 
 i18n.setLocale(language);
 
 function post(appInfo, submissionStartDate) {
+  console.log("[*] slack post", appInfo, submissionStartDate);
   const status = i18n.__(appInfo.status);
   const message = i18n.__("Message", { appname: appInfo.name, status: status });
   const attachment = slackAttachment(appInfo, submissionStartDate);
@@ -54,6 +55,11 @@ function slackAttachment(appInfo, submissionStartDate) {
         value: i18n.__(appInfo.status),
         short: true,
       },
+      {
+        title: i18n.__("Phase percentage"),
+        value: appInfo.phase_percentage,
+        short: true,
+      }
     ],
     footer: "appstore-status-bot",
     footer_icon:
@@ -69,7 +75,7 @@ function slackAttachment(appInfo, submissionStartDate) {
   ) {
     const elapsedHours = moment().diff(moment(submissionStartDate), "hours");
     attachment["fields"].push({
-      title: "Elapsed Time",
+      title: i18n.__("Elapsed Time"),
       value: `${elapsedHours} hours`,
       short: true,
     });
@@ -93,7 +99,7 @@ function colorForStatus(status) {
     "Processing for App Store": successColor2,
     "Pending Apple Release": successColor2,
     "Ready for Sale": successColor2,
-    Rejected: failureColor,
+    "Rejected": failureColor,
     "Metadata Rejected": failureColor,
     "Removed From Sale": failureColor,
     "Developer Rejected": failureColor,

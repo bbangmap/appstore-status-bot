@@ -34,13 +34,14 @@ def get_app_state(app)
     icon_url["{h}"] = "340"
     icon_url["{f}"] = "png"
   end
-
+  live_version_info = app.get_live_app_store_version(includes: "appStoreVersionPhasedRelease")
   {
     "name" => app.name,
     "version" => version_string,
     "status" => app_store_state, 
     "appID" => app.id, 
-    "iconURL" => icon_url
+    "iconURL" => icon_url,
+    "app_store_version_phased_release" => live_version_info.appStoreVersionPhasedRelease,
   }
   
 end
@@ -52,6 +53,7 @@ def get_app_version_from(bundle_id)
   else 
     apps = Spaceship::ConnectAPI::App.all
   end 
+
   apps.map { |app| get_app_state(app) }
 end 
 
