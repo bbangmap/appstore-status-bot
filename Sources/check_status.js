@@ -36,7 +36,7 @@ const checkVersion = async (app, gist) => {
   var phased_release_state = app.app_store_version_phased_release.phased_release_state
   app["phase_percentage"] = calculatePercentage(currentDay, phased_release_state)
 
-  if (!app.appID || app.status != gist.status || app.app_store_version_phased_release != gist.app_store_version_phased_release) {
+  if (!app.appID || app.status != gist.status || app.app_store_version_phased_release.current_day_number != gist.app_store_version_phased_release.current_day_number) {
     console.log("[*] status is different");
 
     var submission_start_date = gist.submission_start_date
