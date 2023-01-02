@@ -19,10 +19,11 @@ const main = async () => {
         var parsed_app = JSON.parse(app);
         var parsed_gist = JSON.parse(existGist);
 
-        for (let index = 0; index < parsed_app.length; index++) {
+        for await (const index of parsed_app.keys()) {
           var checked_app = checkVersion(parsed_app[index], parsed_gist[index]);
           console.log("[*] checked", checked_app);
           checked_app_list.push(checked_app);
+          console.log("[*] checked", checked_app);
         }
         updateGist(checked_app_list);
       } else {
