@@ -21,6 +21,7 @@ const main = async () => {
 
         for (let index = 0; index < parsed_app.length; index++) {
           var checked_app = checkVersion(parsed_app[index], parsed_gist[index]);
+          console.log("[*] checked", checked_app);
           checked_app_list.push(checked_app);
         }
         updateGist(checked_app_list);
