@@ -37,7 +37,9 @@ const main = async () => {
 
 const checkVersion = async (app, gist) => {
   console.log("[*] checkVersion");
-  app["submission_start_date"] = gist.submission_start_date;
+  if (gist.submission_start_date) {
+    app["submission_start_date"] = gist.submission_start_date;
+  }
 
   var currentDay = app.app_store_version_phased_release.current_day_number
   var phased_release_state = app.app_store_version_phased_release.phased_release_state
