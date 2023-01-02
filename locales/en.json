@@ -18,5 +18,9 @@
   "Version": "Version",
   "Message": "The status of your app *{{appname}}* has been changed to *{{status}}* 🚀",
   "Phase percentage": "Phase percentage",
-  "Elapsed Time": "Elapsed Time"
+  "Elapsed Time": "Elapsed Time",
+  "Before Deployment": "Before Deployment",
+  "Gradual deployment completed": "Gradual deployment completed",
+  "Progressive deployment disruption": "Progressive deployment disruption",
+  "Progressive deployment not in progress": "Progressive deployment not in progress"
 }

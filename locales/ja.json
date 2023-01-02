@@ -18,5 +18,9 @@
     "Version": "バージョン",
     "Message": "*{{appname}}*の状態が*{{status}}*に変更されました。 🚀",
 	"Phase percentage": "位相パーセンテージ",
-	"Elapsed Time": "경과 시간"
+	"Elapsed Time": "経過時間",
+	"Before Deployment": "導入前",
+	"Gradual deployment completed": "段階的な導入完了",
+	"Progressive deployment disruption": "導入の中断の進行",
+	"Progressive deployment not in progress": "プログレッシブ展開が進行中ではない"
 }

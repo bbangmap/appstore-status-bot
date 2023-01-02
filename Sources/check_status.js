@@ -59,15 +59,18 @@ const checkVersion = async (app, gist) => {
 
   await updateGist(app);
 };
-const calculatePercentage = (currentDay, phased_release_state) => {
+const calculatePercentage = (currentDay, phased_release_state, status) => {
+  if (status != "Ready for sale") {
+    return "Before Deployment"
+  }
   if (phased_release_state == "COMPLETE") {
-    return "점진적 배포가 완료되었습니다."
+    return "Gradual deployment completed"
   }
   if (phased_release_state == "PAUSED") {
-     return "점진적 배포가 중단되었습니다."
+     return "Progressive deployment disruption"
   }
   if (phased_release_state != "ACTIVE") {
-    return "점진적 배포 진행중이 아닙니다."
+    return "Progressive deployment not in progress"
   }
   if (currentDay == 1) {
     return "1%"
@@ -90,7 +93,7 @@ const calculatePercentage = (currentDay, phased_release_state) => {
   if (currentDay == 7) {
     return "100%"
   }
-  return "점진적 배포 진행중이 아닙니다."
+  return "Progressive deployment not in progress"
 };
 
 const getGist = async () => {

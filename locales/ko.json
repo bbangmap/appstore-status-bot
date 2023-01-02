@@ -18,5 +18,9 @@
   "Version": "버전",
   "Message": "*{{appname}}* 앱의 상태가 *{{status}}* 으로 변경 되었습니다. 🚀",
   "Phase percentage": "점진적 출시 진행률",
-  "Elapsed Time": "경과 시간"
+  "Elapsed Time": "경과 시간",
+  "Before Deployment": "배포 전",
+  "Gradual deployment completed": "점진적 배포 완료",
+  "Progressive deployment disruption": "점진적인 배포 중단",
+  "Progressive deployment not in progress": "점진적 배포 진행중이 아닙니다"
 }

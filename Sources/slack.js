@@ -57,7 +57,7 @@ function slackAttachment(appInfo, submissionStartDate) {
       },
       {
         title: i18n.__("Phase percentage"),
-        value: appInfo.phase_percentage,
+        value: i18n.__(appInfo.phase_percentage),
         short: true,
       }
     ],
