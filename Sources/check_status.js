@@ -10,14 +10,12 @@ const octokit = new Octokit({ auth: `token ${process.env.GH_TOKEN}` });
 
 const main = async () => {
   var existGist = await getGist();
-
-  var checked_app_list = [];
-
   exec(
     "ruby Sources/fetch_app_status.rb",
     { env: env },
     function (_, app, stderr) {
       if (app) {
+        var checked_app_list = [];
         var parsed_app = JSON.parse(app);
         var parsed_gist = JSON.parse(existGist);
 
@@ -25,14 +23,13 @@ const main = async () => {
           var checked_app = checkVersion(parsed_app[index], parsed_gist[index]);
           checked_app_list.push(checked_app);
         }
+        updateGist(checked_app_list);
       } else {
         console.log("There was a problem fetching the status of the app!");
         console.log(stderr);
       }
     }
   );
-
-  await updateGist(checked_app_list);
 };
 
 const checkVersion = async (app, gist) => {
