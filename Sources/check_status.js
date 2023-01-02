@@ -23,7 +23,7 @@ const main = async () => {
 
         for (let index = 0; index < parsed_app.length; index++) {
           var checked_app = checkVersion(parsed_app[index], parsed_gist[index]);
-          checked_app_list += checked_app;
+          checked_app_list.push(checked_app);
         }
       } else {
         console.log("There was a problem fetching the status of the app!");
