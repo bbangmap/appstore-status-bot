@@ -41,6 +41,9 @@ const checkVersion = async (app, gist) => {
     app["submission_start_date"] = gist.submission_start_date;
     var isEqualPhasesState = app.app_store_version_phased_release.phased_release_state == gist.app_store_version_phased_release.phased_release_state
     var isEqualPhasesDay = app.app_store_version_phased_release.current_day_number == gist.app_store_version_phased_release.current_day_number
+  } else {
+    var isEqualPhasesState = false
+    var isEqualPhasesDay = false
   }
 
   var currentDay = app.app_store_version_phased_release.current_day_number
