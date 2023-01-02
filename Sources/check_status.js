@@ -11,6 +11,8 @@ const octokit = new Octokit({ auth: `token ${process.env.GH_TOKEN}` });
 const main = async () => {
   var existGist = await getGist();
 
+  var checked_app_list = [];
+
   exec(
     "ruby Sources/fetch_app_status.rb",
     { env: env },
@@ -19,18 +21,22 @@ const main = async () => {
         var parsed_app = JSON.parse(app);
         var parsed_gist = JSON.parse(existGist);
 
-        checkVersion(parsed_app, parsed_gist);
+        for (let index = 0; index < parsed_app.length; index++) {
+          var checked_app = checkVersion(parsed_app[index], parsed_gist[index]);
+          checked_app_list += checked_app;
+        }
       } else {
         console.log("There was a problem fetching the status of the app!");
         console.log(stderr);
       }
     }
   );
+
+  await updateGist(checked_app_list);
 };
 
 const checkVersion = async (app, gist) => {
   console.log("[*] checkVersion");
-  var app = app[0];
   app["submission_start_date"] = gist.submission_start_date;
 
   var currentDay = app.app_store_version_phased_release.current_day_number
@@ -57,7 +63,7 @@ const checkVersion = async (app, gist) => {
     console.log("[*] status is same");
   }
 
-  await updateGist(app);
+  return app;
 };
 const calculatePercentage = (currentDay, phased_release_state, status) => {
   if (status != "Ready for sale") {
