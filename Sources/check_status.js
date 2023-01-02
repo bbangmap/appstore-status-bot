@@ -37,7 +37,7 @@ const main = async () => {
 
 const checkVersion = async (app, gist) => {
   console.log("[*] checkVersion", gist, "gist");
-  if (gist != "") {
+  if (gist && gist.submission_start_date) {
     app["submission_start_date"] = gist.submission_start_date;
   }
 
