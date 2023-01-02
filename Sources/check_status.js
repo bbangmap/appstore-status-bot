@@ -53,11 +53,11 @@ const checkVersion = async (app, gist) => {
   if (!app.appID || !isEqualPhasesState || app.status != gist.status || (!isEqualPhasesDay && phased_release_state == "ACTIVE")) {
     console.log("[*] status is different");
 
-    var submission_start_date = gist.submission_start_date
-    if (!submission_start_date) {
-      submission_start_date = new Date();
+    if (gist && gist.submission_start_date) {
+      slack.post(app, gist.submission_start_date);
+    } else {
+      slack.post(app, new Date());
     }
-    slack.post(app, submission_start_date);
 
     if (app.status == "Waiting for review") {
       app["submission_start_date"] = new Date();
