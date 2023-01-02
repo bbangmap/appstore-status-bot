@@ -59,11 +59,12 @@ const checkVersion = async (app, gist) => {
     if (app.status == "Waiting for review") {
       app["submission_start_date"] = new Date();
     }
+    return app;
   } else {
     console.log("[*] status is same");
+    return app;
   }
 
-  return app;
 };
 const calculatePercentage = (currentDay, phased_release_state, status) => {
   if (status != "Ready for sale") {
