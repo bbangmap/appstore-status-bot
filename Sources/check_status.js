@@ -53,7 +53,7 @@ const checkVersion = async (app, gist) => {
   var isEqualPhasesState = phased_release_state == gist_phased_release_state
   var isEqualPhasesDay = currentDay == gist_currentDay
   var generated_message = generateMessage(currentDay, phased_release_state, app.status)
-  app["generated_message"] = "<!subteam^S01DBJMNK4P> <!subteam^S03TPMY9EKH> 애플 심사 상태: " + generated_message
+  app["generated_message"] = "애플 심사 상태: " + generated_message
 
   if (!app.appID || !isEqualPhasesState || app.status != gist.status || (!isEqualPhasesDay && phased_release_state == "ACTIVE" && app.status == "Ready for sale")) {
     console.log("[*] status is different");
