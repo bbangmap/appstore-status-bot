@@ -152,7 +152,7 @@ const generateMessage = (currentDay, phased_release_state, status) => {
   if (currentDay == 7) {
     return "점진적 배포가 100%로 진행 중입니다."
   }
-  return "점진적 배포 진행중이 아닙니다."
+  return "."
 };
 
 const getGist = async () => {
