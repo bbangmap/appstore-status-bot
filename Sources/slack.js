@@ -17,7 +17,7 @@ i18n.setLocale(language);
 function post(appInfo, submissionStartDate) {
   console.log("[*] slack post");
   const status = i18n.__(appInfo.status);
-  const message = i18n.__("Message", { appname: appInfo.name, status: status });
+  const message = appInfo.generated_message;
   const attachment = slackAttachment(appInfo, submissionStartDate);
 
   const params = {
@@ -48,17 +48,12 @@ function slackAttachment(appInfo, submissionStartDate) {
       {
         title: i18n.__("Version"),
         value: appInfo.version,
-        short: true,
+        short: true
       },
       {
         title: i18n.__("Status"),
         value: i18n.__(appInfo.status),
-        short: true,
-      },
-      {
-        title: i18n.__("Phase percentage"),
-        value: i18n.__(appInfo.phase_percentage),
-        short: true,
+        short: true
       }
     ],
     footer: "appstore-status-bot",
@@ -67,19 +62,6 @@ function slackAttachment(appInfo, submissionStartDate) {
     ts: new Date().getTime() / 1000,
   };
 
-  // Set elapsed time since "Waiting For Review" start
-  if (
-    submissionStartDate &&
-    appInfo.status != "Prepare for Submission" &&
-    appInfo.status != "Waiting For Review"
-  ) {
-    const elapsedHours = moment().diff(moment(submissionStartDate), "hours");
-    attachment["fields"].push({
-      title: i18n.__("Elapsed Time"),
-      value: `${elapsedHours} hours`,
-      short: true,
-    });
-  }
   return attachment;
 }
 
