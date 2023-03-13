@@ -10,22 +10,16 @@ const octokit = new Octokit({ auth: `token ${process.env.GH_TOKEN}` });
 
 const main = async () => {
   var existGist = await getGist();
+
   exec(
     "ruby Sources/fetch_app_status.rb",
     { env: env },
     function (_, app, stderr) {
       if (app) {
-        var checked_app_list = [];
         var parsed_app = JSON.parse(app);
         var parsed_gist = JSON.parse(existGist);
 
-        for await (const index of parsed_app.keys()) {
-          var checked_app = checkVersion(parsed_app[index], parsed_gist[index]);
-          console.log("[*] checked", checked_app);
-          checked_app_list.push(checked_app);
-          console.log("[*] checked", checked_app);
-        }
-        updateGist(checked_app_list);
+        checkVersion(parsed_app, parsed_gist);
       } else {
         console.log("There was a problem fetching the status of the app!");
         console.log(stderr);
@@ -35,74 +29,130 @@ const main = async () => {
 };
 
 const checkVersion = async (app, gist) => {
-  console.log("[*] checkVersion", gist, "gist");
-  if (gist && gist.submission_start_date) {
-    app["submission_start_date"] = gist.submission_start_date;
-    var isEqualPhasesState = app.app_store_version_phased_release.phased_release_state == gist.app_store_version_phased_release.phased_release_state
-    var isEqualPhasesDay = app.app_store_version_phased_release.current_day_number == gist.app_store_version_phased_release.current_day_number
+  console.log("[*] checkVersion");
+  var app = app[0];
+
+  app["submission_start_date"] = gist.submission_start_date;
+
+  if (!app.app_store_version_phased_release) {
+    var currentDay = 0
+    var phased_release_state = "NOT_EXIST"
   } else {
-    var isEqualPhasesState = false
-    var isEqualPhasesDay = false
+    var currentDay = app.app_store_version_phased_release.current_day_number
+    var phased_release_state = app.app_store_version_phased_release.phased_release_state
   }
 
-  var currentDay = app.app_store_version_phased_release.current_day_number
-  var phased_release_state = app.app_store_version_phased_release.phased_release_state
-  app["phase_percentage"] = calculatePercentage(currentDay, phased_release_state)
+  if (!gist.app_store_version_phased_release) {
+    var gist_currentDay = 0
+    var gist_phased_release_state = "NOT_EXIST"
+  } else {
+    var gist_currentDay = gist.app_store_version_phased_release.current_day_number
+    var gist_phased_release_state = gist.app_store_version_phased_release.phased_release_state
+  }
+  
+  var isEqualPhasesState = phased_release_state == gist_phased_release_state
+  var isEqualPhasesDay = currentDay == gist_currentDay
+  var generated_message = generateMessage(currentDay, phased_release_state, app.status)
+  app["generated_message"] = "<!subteam^S01DBJMNK4P> <!subteam^S03TPMY9EKH> 애플 심사 상태: " + generated_message
 
-  if (!app.appID || !isEqualPhasesState || app.status != gist.status || (!isEqualPhasesDay && phased_release_state == "ACTIVE")) {
+  if (!app.appID || !isEqualPhasesState || app.status != gist.status || (!isEqualPhasesDay && phased_release_state == "ACTIVE" && app.status == "Ready for sale")) {
     console.log("[*] status is different");
 
-    if (gist && gist.submission_start_date) {
-      slack.post(app, gist.submission_start_date);
-    } else {
-      slack.post(app, new Date());
+    var submission_start_date = gist.submission_start_date
+    if (!submission_start_date) {
+      submission_start_date = new Date();
     }
+    slack.post(app, submission_start_date);
 
     if (app.status == "Waiting for review") {
       app["submission_start_date"] = new Date();
     }
-    return app;
   } else {
     console.log("[*] status is same");
-    return app;
   }
 
+  await updateGist(app);
 };
-const calculatePercentage = (currentDay, phased_release_state, status) => {
+const generateMessage = (currentDay, phased_release_state, status) => {
+  if (status == "Prepare for submission") {
+    return "제출 준비 중입니다."
+  }
+  if (status == "Waiting for review") {
+    return "심사 대기 중입니다."
+  }
+  if (status == "In review") {
+    return "심사 중입니다."
+  }
+  if (status == "Pending contract") {
+    return "대기 중인 계약입니다."
+  }
+  if (status == "Waiting for export compliance") {
+    return "수출 규정 관련 문서 승인 대기중입니다."
+  }
+  if (status == "Pending developer release") {
+    return "개발자 출시 대기 중입니다."
+  }
+  if (status == "Processing for app store") {
+    return "App Store 판매 준비중입니다."
+  }
+  if (status == "Pending apple release") {
+    return "앱 승인 대기 중입니다."
+  }
+  if (status == "Rejected") {
+    return "앱 승인이 거부되었습니다."
+  }
+  if (status == "Metadata rejected") {
+    return "메타데이터가 거부되었습니다."
+  }
+  if (status == "Removed from sale") {
+    return "판매가 중단되었습니다."
+  }
+  if (status == "Developer rejected") {
+    return "개발자가 취소했습니다."
+  }
+  if (status == "Developer removed from sale") {
+    return "개발자가 판매를 중단했습니다."
+  }
+  if (status == "Invalid binary") {
+    return "유효하지 않은 바이너리로 인해 거절되었습니다."
+  }
   if (status != "Ready for sale") {
-    return "Before Deployment"
+    return "앱이 판매 준비중이 아닙니다."
   }
   if (phased_release_state == "COMPLETE") {
-    return "Gradual deployment completed"
+    return "점진적 배포가 완료되었습니다."
   }
   if (phased_release_state == "PAUSED") {
-     return "Progressive deployment disruption"
+     return "점진적 배포가 중단되었습니다."
   }
   if (phased_release_state != "ACTIVE") {
-    return "Progressive deployment not in progress"
+    return "점진적 배포 진행중이 아닙니다."
+  }
+  if (phased_release_state == "NOT_EXIST") {
+    return "배포가 완료되었습니다."
   }
   if (currentDay == 1) {
-    return "1%"
+    return "점진적 배포가 1%로 진행 중입니다."
   }
   if (currentDay == 2) {
-    return "2%"
+    return "점진적 배포가 2%로 진행 중입니다."
   }
   if (currentDay == 3) {
-    return "5%"
+    return "점진적 배포가 5%로 진행 중입니다."
   }
   if (currentDay == 4) {
-    return "10%"
+    return "점진적 배포가 10%로 진행 중입니다."
   }
   if (currentDay == 5) {
-    return "20%"
+    return "점진적 배포가 20%로 진행 중입니다."
   }
   if (currentDay == 6) {
-    return "50%"
+    return "점진적 배포가 50%로 진행 중입니다."
   }
   if (currentDay == 7) {
-    return "100%"
+    return "점진적 배포가 100%로 진행 중입니다."
   }
-  return "Progressive deployment not in progress"
+  return "점진적 배포 진행중이 아닙니다."
 };
 
 const getGist = async () => {
@@ -144,4 +194,5 @@ const updateGist = async (content) => {
   });
 };
 
+main();
 main();
