@@ -195,4 +195,3 @@ const updateGist = async (content) => {
 };
 
 main();
-main();
