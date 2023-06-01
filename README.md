@@ -1,3 +1,5 @@
+[![Fetch Appstore Info](https://github.com/bbangmap/appstore-status-bot/actions/workflows/fetch.yml/badge.svg)](https://github.com/bbangmap/appstore-status-bot/actions/workflows/fetch.yml)
+
 <p align="center"><img src="./.github/images/og.png" width="70%"></p>
 
 
