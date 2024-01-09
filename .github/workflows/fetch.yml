@@ -8,8 +8,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+        container: gcr.io/$(github.repository)/ubuntu-22.04:20231217.2.1
     steps:
       - uses: actions/checkout@v3.3.0
+        with:
+          ref: 20231217.2.1
       - uses: actions/setup-node@v2.1.1
         with:
           node-version: "14.x"
