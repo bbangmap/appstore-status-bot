@@ -31,4 +31,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GIST_ID: ${{ secrets.GIST_ID }}
           LANGUAGE: "ko"
-      - uses: gautamkrishnar/keepalive-workflow@v1 
+      - uses: gautamkrishnar/keepalive-workflow@v1.3.0 
