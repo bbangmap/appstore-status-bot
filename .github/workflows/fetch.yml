@@ -7,9 +7,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+        container: gcr.io/$(github.repository)/ubuntu-22.04:20231217.2.1
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.3.0
+        with:
+          ref: 20231217.2.1
       - uses: actions/setup-node@v2.1.1
         with:
           node-version: "14.x"
@@ -31,4 +34,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GIST_ID: ${{ secrets.GIST_ID }}
           LANGUAGE: "ko"
-      - uses: gautamkrishnar/keepalive-workflow@v1 
+      - uses: gautamkrishnar/keepalive-workflow@v1.3.0 
